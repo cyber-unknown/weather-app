@@ -180,7 +180,7 @@ function App() {
     <div className="min-h-screen w-full bg-gradient-to-br from-gray-900 to-gray-800 text-white">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* Search Bar */}
-        <div className="backdrop-blur-md bg-white/10 rounded-2xl p-4 mb-8 mx-auto max-w-3xl">
+        <div className="relative z-50 backdrop-blur-md bg-white/10 rounded-2xl p-4 mb-8 mx-auto max-w-3xl">
           <div className="relative">
             <input
               type="text"
@@ -194,25 +194,27 @@ function App() {
                 <div className="animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent"></div>
               </div>
             )}
-            {error && (
-              <div className="absolute top-full left-0 right-0 mt-2 p-3 bg-red-500/80 backdrop-blur-md rounded-lg text-white">
-                {error}
-              </div>
-            )}
-            {suggestions.length > 0 && (
-              <div className="absolute z-10 w-full mt-2 backdrop-blur-md bg-white/10 rounded-xl overflow-hidden">
+          </div>
+          {error && (
+            <div className="absolute top-full left-0 right-0 mt-2 p-3 bg-red-500/80 backdrop-blur-md rounded-lg text-white">
+              {error}
+            </div>
+          )}
+          {suggestions.length > 0 && (
+            <div className="absolute left-0 right-0 mt-2">
+              <div className="backdrop-blur-lg bg-gray-900/95 rounded-xl overflow-hidden shadow-2xl border border-white/10">
                 {suggestions.map((suggestion, index) => (
                   <div
                     key={index}
                     onClick={() => handleLocationSelect(suggestion)}
-                    className="px-6 py-4 hover:bg-white/20 cursor-pointer transition-colors"
+                    className="px-6 py-4 hover:bg-white/10 cursor-pointer transition-colors"
                   >
                     {formatAddress(suggestion)}
                   </div>
                 ))}
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
 
         {loading ? (
@@ -262,9 +264,18 @@ function App() {
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <p className="text-white/60">Latitude: <span className="text-white">{coordinates.lat.toFixed(4)}</span></p>
-                  <p className="text-white/60">Longitude: <span className="text-white">{coordinates.lng.toFixed(4)}</span></p>
+                <div className="bg-white/5 rounded-xl p-6 mt-8">
+                  <h3 className="text-2xl font-semibold text-white mb-4">Location Details</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="backdrop-blur-md bg-white/5 rounded-xl p-6">
+                      <p className="text-white/70 text-lg mb-2">Latitude</p>
+                      <p className="text-3xl font-light text-white">{coordinates.lat.toFixed(4)}°</p>
+                    </div>
+                    <div className="backdrop-blur-md bg-white/5 rounded-xl p-6">
+                      <p className="text-white/70 text-lg mb-2">Longitude</p>
+                      <p className="text-3xl font-light text-white">{coordinates.lng.toFixed(4)}°</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
