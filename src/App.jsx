@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const POSITION_API_KEY = import.meta.env.VITE_POSITION_API_KEY;
+const LOCATIONIQ_API_KEY = import.meta.env.VITE_LOCATIONIQ_API_KEY;
 const WEATHER_API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
 
 function App() {
@@ -91,11 +91,11 @@ function App() {
     try {
       console.log('Searching locations for:', query);
       const response = await axios.get(
-        `https://api.positionstack.com/v1/forward?access_key=${POSITION_API_KEY}&query=${encodeURIComponent(query)}`
+        `https://us1.locationiq.com/v1/search?key=${LOCATIONIQ_API_KEY}&q=${encodeURIComponent(query)}&format=json`
       );
       console.log('Location data:', response.data);
-      if (response.data && response.data.data) {
-        setSuggestions(response.data.data);
+      if (response.data) {
+        setSuggestions(response.data);
       }
     } catch (error) {
       console.error('Error searching locations:', error.response || error);
@@ -107,10 +107,10 @@ function App() {
   const reverseGeocode = async (lat, lng) => {
     try {
       const response = await axios.get(
-        `https://api.positionstack.com/v1/reverse?access_key=${POSITION_API_KEY}&query=${lat},${lng}`
+        `https://us1.locationiq.com/v1/reverse?key=${LOCATIONIQ_API_KEY}&lat=${lat}&lon=${lng}&format=json`
       );
-      if (response.data && response.data.data && response.data.data[0]) {
-        const location = response.data.data[0];
+      if (response.data) {
+        const location = response.data;
         setAddress(formatAddress(location));
       }
     } catch (error) {
@@ -119,11 +119,16 @@ function App() {
   };
 
   const formatAddress = (location) => {
+    if (location.display_name) {
+      return location.display_name;
+    }
     const parts = [];
-    if (location.name) parts.push(location.name);
-    if (location.region) parts.push(location.region);
-    if (location.country) parts.push(location.country);
-    return parts.join(', ');
+    if (location.address) {
+      if (location.address.city) parts.push(location.address.city);
+      if (location.address.state) parts.push(location.address.state);
+      if (location.address.country) parts.push(location.address.country);
+    }
+    return parts.join(', ') || location.display_name || '';
   };
 
   const handleSearch = async (e) => {
@@ -137,8 +142,8 @@ function App() {
   };
 
   const handleLocationSelect = async (location) => {
-    const lat = parseFloat(location.latitude);
-    const lng = parseFloat(location.longitude);
+    const lat = parseFloat(location.lat);
+    const lng = parseFloat(location.lon);
     setCoordinates({ lat, lng });
     setAddress(formatAddress(location));
     setSuggestions([]);
