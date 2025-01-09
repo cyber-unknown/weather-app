@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const LOCATIONIQ_API_KEY = import.meta.env.VITE_LOCATIONIQ_API_KEY;
+const LOCATIONIQ_API_KEY = 'pk.1c0f8eaf506475c422fa64b9433a62f3';
 const WEATHER_API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
 
 function App() {
